@@ -54,6 +54,8 @@
 					} else {
 						lastItem.find('.ui-icon-close').click();
 					}
+				} else {
+					
 				}
 			});
 			this.input.blur(function(e) {
