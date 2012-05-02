@@ -45,6 +45,20 @@
 			this.background.click($.proxy(function() {
 				this.input.focus();
 			},this));
+			this.input.keyup(function(e) {
+				var keycode =  e.keyCode ? e.keyCode : e.which;
+				if(keycode == 8 && !$(this).val().length) {
+					var lastItem = this.items.last();
+					if(!lastItem.is('.ui-state-hover')) {
+						lastItem.addClass('ui-state-hover').removeClass('ui-state-default');
+					} else {
+						lastItem.find('.ui-icon-close').click();
+					}
+				}
+			});
+			this.input.blur(function(e) {
+				this.items.filter('.ui-state-hover').removeClass('ui-state-hover').addClass('ui-state-default');
+			});
 			
 			//Refresh elements
 			this.refresh();
