@@ -5,7 +5,25 @@
 		
 		options: { 
 			source: [],
-			multiple: 'auto'
+			multiple: 'auto',
+			inputMinSize : 5,
+		},
+		
+		_key : {
+			'enter': 13,
+			'tab': 9,
+			'comma': 188,
+			'backspace': 8,
+			'leftarrow': 37,
+			'uparrow': 38,
+			'rightarrow': 39,
+			'downarrow': 40,
+			'exclamation': 33,
+			'slash': 47,
+			'colon': 58,
+			'at': 64,
+			'squarebricket_left': 91,
+			'apostrof': 96
 		},
 		
 		_create: function() {
@@ -14,9 +32,10 @@
 			
 			if(this.options.multiple === 'auto') {
 				if(this.element.attr('multiple') || this.element.attr('name').match(/\[\]$/i)) {
-					this.options.multiple = true;
 					this.element.attr('multiple','multiple');
+					this.options.multiple = true;
 				} else {
+					this.element.removeAttr('multiple');
 					this.options.multiple = false;
 				}
 			}
@@ -24,16 +43,21 @@
 			//Parts
 			this.container = $('<div class="'+this.widgetBaseClass+'"></div>');
 			this.background = $('<div class="background"></div>')
-			this.input = $('<input type="text" />');
+			this.input = $('<input type="text" size="'+this.options.inputMinSize+'" />');
 			
+			//Construction
 			this.element.after(this.container);
 			this.container.append(this.input);
 			this.container.append(this.background);
 			this.container.append('<div style="clear:both;"></div>');
 			
 			//Events
-			this.container.on("click", "a.ui-icon-close", $.proxy(this._itemRemove, this));
+			this.container.on("click", "a.ui-icon-close", $.proxy(function(e) {
+				var item = $(e.target).data(this.namespace+'.itemsField');
+				this.removeItem(item.data(this.namespace+'.itemsField.option'));
+			}, this));
 			this.input.autocomplete({
+				appendTo : this.container,
 				source : this.options.source,
 				select : $.proxy(function(event,ui) {
 					event.preventDefault();
@@ -45,22 +69,50 @@
 			this.background.click($.proxy(function() {
 				this.input.focus();
 			},this));
-			this.input.keyup(function(e) {
+			this.background.dblclick($.proxy(function() {
+				this.input.get(0).select();
+			},this));
+			this.input.keydown($.proxy(function(e) {
 				var keycode =  e.keyCode ? e.keyCode : e.which;
-				if(keycode == 8 && !$(this).val().length) {
+				var val = $(e.target).val();
+				if(keycode == this._key.backspace && !val.length && this.items) {
 					var lastItem = this.items.last();
-					if(!lastItem.is('.ui-state-hover')) {
-						lastItem.addClass('ui-state-hover').removeClass('ui-state-default');
+					if(!lastItem.is('.ui-state-active')) {
+						lastItem.addClass('ui-state-active').removeClass('ui-state-default');
 					} else {
 						lastItem.find('.ui-icon-close').click();
 					}
+				} else if(
+					(keycode == this._key.enter || keycode == this._key.comma || keycode == this._key.tab) && 
+					val.length && 
+					$(e.target).is(':focus')
+				) {
+					
+					this.addItem({'label' : val});
+					this.input.val('');
+					this.input.focus();
+					return false;
+					
 				} else {
 					
+					
 				}
-			});
-			this.input.blur(function(e) {
-				this.items.filter('.ui-state-hover').removeClass('ui-state-hover').addClass('ui-state-default');
-			});
+
+			},this));
+			this.input.blur($.proxy(function(e) {
+				if(this.items && this.items.filter('.ui-state-active').length) {
+					this.items.filter('.ui-state-active').removeClass('ui-state-active').addClass('ui-state-default');
+				}
+			},this));
+			this.input.keypress($.proxy(function(e) {
+				if (e.keyCode == this._key.enter) {
+					return false;
+				}
+				//auto expand input
+				var val = this.input.val();
+				var newsize = (this.options.inputMinSize > val.length) ? this.options.inputMinSize : (val.length + 1);
+				this.input.attr("size", Math.ceil(newsize*1.2));
+			},this));
 			
 			//Refresh elements
 			this.refresh();
@@ -69,15 +121,19 @@
 			// Keep track of the generated list items
 			this.items = this.items || $();
 			// Use a class to avoid working on options that have already been created
-			this.element.find( "option:not(."+this.widgetBaseClass+"-option):selected" ).each( $.proxy(function( i, el ) {
-		 
+			this.element.find( "option:selected:not(."+this.widgetBaseClass+"-option)" ).each( $.proxy(function( i, el ) {
+		 		if(!$(el).text().length) return;
 				// Add the class so this option will not be processed next time the list is refreshed
 				var $el = $( el ).addClass( this.widgetBaseClass+"-option" ),
 					text = $el.text(),
-					linkElement = text + '<a href="#" class="ui-icon ui-icon-close"></a>',
-					item = $( "<span class='"+this.widgetBaseClass+"-item ui-state-default ui-corner-all'>" + linkElement + "</span>" )
-						.data( "option.multi", el )
-						.insertBefore( this.input );
+					item = $( '<span class="'+this.widgetBaseClass+'-item  ui-corner-all"></span>' )
+						.text(text)
+						.addClass('ui-state-default')
+						.data( this.namespace+'.itemsField.option', el )
+						.insertBefore( this.input ),
+					link = $('<a href="#" class="ui-icon ui-icon-close"></a>')
+						.data(this.namespace+'.itemsField',item)
+						.appendTo(item);
 		 
 				// Save it into the item cache
 				this.items = this.items.add( item );
@@ -87,9 +143,11 @@
 			// If the the option associated with this list item is no longer contained by the
 			// real select element, remove it from the list and the cache
 			this.items = this.items.filter( $.proxy(function( i, item ) {
-				var isInOriginal = $.contains( this.element[0], $.data( item, "option.multi" ) );
+				var isInOriginal = $.contains( this.element[0], $.data( item, this.namespace+'.itemsField.option' ) );
 				if ( !isInOriginal ) {
-					$( item ).remove();
+					 $(item).fadeOut('fast',function() {
+						$(this).remove(); 
+					 });
 				}
 				return isInOriginal;
 			}, this ));
@@ -99,9 +157,18 @@
 		
 		addItem : function(item) {
 			
-			this.element.append('<option value="'+item.value+'" selected="selected">'+item.label+'</option>');
+			this.element.append('<option '+(typeof(item.value) != 'undefined' ? 'value="'+item.value+'" ':'')+'selected="selected">'+item.label+'</option>');
 			this.refresh();
 			
+		},
+		
+		removeItem : function(item) {
+			this.element.find('option').each(function() {
+				if($(this).get(0) == $(item).get(0)) {
+					$(this).remove();
+				}
+			});
+			this.refresh();
 		},
 		
 		_itemRemove: function( e ) {
