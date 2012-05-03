@@ -91,6 +91,7 @@
 .ui-itemsField .ui-autocomplete {
 	position:absolute;
 	font-size:90%;
+	min-width:115px;
 }
 .ui-itemsField .ui-autocomplete .ui-autocomplete-noresult {
 	text-align:center;
