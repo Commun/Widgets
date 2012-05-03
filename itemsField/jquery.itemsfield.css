@@ -57,6 +57,7 @@
 	max-width:100%;
 	margin-top:1px;
 	margin-bottom:3px;
+	-webkit-appearance: none;
 }
 
 .ui-itemsField .ui-itemsField-item {
@@ -90,4 +91,15 @@
 .ui-itemsField .ui-autocomplete {
 	position:absolute;
 	font-size:90%;
+}
+.ui-itemsField .ui-autocomplete .ui-autocomplete-noresult {
+	text-align:center;
+	padding:0.2em 0;
+}
+.ui-itemsField .ui-autocomplete .ui-autocomplete-buttons {
+	clear:both;
+	border-top:solid 1px #ddd;
+	padding-top:0.2em;
+	margin-top:0.4em;
+	text-align:center;
 }

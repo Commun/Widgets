@@ -66,6 +66,37 @@
 					this.addItem.call(this,ui.item);
 				},this)
 			});
+			this.autocomplete = this.input.data( "autocomplete" );
+			this.autocomplete._response = function( content ) {
+				if ( !this.options.disabled ) {
+					content = this._normalize( (content || []) );
+					this._suggest( content );
+					this._trigger( "open" );
+				} else {
+					this.close();
+				}
+				this.pending--;
+				if ( !this.pending ) {
+					this.element.removeClass( "ui-autocomplete-loading" );
+				}
+			};
+			this.autocomplete._renderMenu = function( ul, items ) {
+				var self = this;
+				$.each( items, function( index, item ) {
+					self._renderItem( ul, item );
+				});
+				if(!items.length) {
+					var $li = $('<li class="ui-autocomplete-noresult">Aucun résultat</li>');
+					ul.append($li);
+				}
+				var $li = $('<li class="ui-autocomplete-buttons"><button>Créer un item</button></li>');
+				$li.find("button").button({
+					icons: {
+						primary:'ui-icon-plus'
+					}
+				});
+				ul.append($li);
+			};
 			this.background.click($.proxy(function() {
 				this.input.focus();
 			},this));
@@ -84,8 +115,7 @@
 					}
 				} else if(
 					(keycode == this._key.enter || keycode == this._key.comma || keycode == this._key.tab) && 
-					val.length && 
-					$(e.target).is(':focus')
+					val.length && $(e.target).is(':focus')
 				) {
 					
 					this.addItem({'label' : val});
