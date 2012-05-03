@@ -6,7 +6,7 @@
 		options: { 
 			source: [],
 			multiple: 'auto',
-			inputMinSize : 5,
+			inputMinSize : 5
 		},
 		
 		_key : {
@@ -53,8 +53,8 @@
 			
 			//Events
 			this.container.on("click", "a.ui-icon-close", $.proxy(function(e) {
-				var item = $(e.target).data(this.namespace+'.itemsField');
-				this.removeItem(item.data(this.namespace+'.itemsField.option'));
+				var it = $(e.target).data(this.namespace+'.itemsField');
+				this.removeItem(it.data(this.namespace+'.itemsField.option'));
 			}, this));
 			this.input.autocomplete({
 				appendTo : this.container,
@@ -126,26 +126,26 @@
 				// Add the class so this option will not be processed next time the list is refreshed
 				var $el = $( el ).addClass( this.widgetBaseClass+"-option" ),
 					text = $el.text(),
-					item = $( '<span class="'+this.widgetBaseClass+'-item  ui-corner-all"></span>' )
+					it = $( '<span class="'+this.widgetBaseClass+'-item  ui-corner-all"></span>' )
 						.text(text)
 						.addClass('ui-state-default')
 						.data( this.namespace+'.itemsField.option', el )
 						.insertBefore( this.input ),
 					link = $('<a href="#" class="ui-icon ui-icon-close"></a>')
-						.data(this.namespace+'.itemsField',item)
-						.appendTo(item);
+						.data(this.namespace+'.itemsField',it)
+						.appendTo(it);
 		 
 				// Save it into the item cache
-				this.items = this.items.add( item );
+				this.items = this.items.add( it );
 		 
 			},this));
 		 
 			// If the the option associated with this list item is no longer contained by the
 			// real select element, remove it from the list and the cache
-			this.items = this.items.filter( $.proxy(function( i, item ) {
-				var isInOriginal = $.contains( this.element[0], $.data( item, this.namespace+'.itemsField.option' ) );
+			this.items = this.items.filter( $.proxy(function( i, it ) {
+				var isInOriginal = $.contains( this.element[0], $.data( it, this.namespace+'.itemsField.option' ) );
 				if ( !isInOriginal ) {
-					 $(item).fadeOut('fast',function() {
+					 $(it).fadeOut('fast',function() {
 						$(this).remove(); 
 					 });
 				}
@@ -155,16 +155,16 @@
 			//this.list.find('li.'+this.widgetBaseClass+'-item')
 		},
 		
-		addItem : function(item) {
+		addItem : function(it) {
 			
-			this.element.append('<option '+(typeof(item.value) != 'undefined' ? 'value="'+item.value+'" ':'')+'selected="selected">'+item.label+'</option>');
+			this.element.append('<option '+(typeof(it.value) != 'undefined' ? 'value="'+it.value+'" ':'')+'selected="selected">'+it.label+'</option>');
 			this.refresh();
 			
 		},
 		
-		removeItem : function(item) {
+		removeItem : function(it) {
 			this.element.find('option').each(function() {
-				if($(this).get(0) == $(item).get(0)) {
+				if($(this).get(0) == $(it).get(0)) {
 					$(this).remove();
 				}
 			});
