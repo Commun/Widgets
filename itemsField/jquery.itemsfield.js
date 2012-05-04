@@ -6,29 +6,11 @@
 		options: { 
 			source: [],
 			multiple: 'auto',
-			inputMinSize : 5
+			inputMinSize : 5,
+			create : 'text'
 		},
 		
-		_key : {
-			'enter': 13,
-			'tab': 9,
-			'comma': 188,
-			'backspace': 8,
-			'leftarrow': 37,
-			'uparrow': 38,
-			'rightarrow': 39,
-			'downarrow': 40,
-			'exclamation': 33,
-			'slash': 47,
-			'colon': 58,
-			'at': 64,
-			'squarebricket_left': 91,
-			'apostrof': 96
-		},
-		
-		_create: function() {
-			
-			this.element.hide();
+		_normalizeOptions : function() {
 			
 			if(this.options.multiple === 'auto') {
 				if(this.element.attr('multiple') || this.element.attr('name').match(/\[\]$/i)) {
@@ -39,6 +21,21 @@
 					this.options.multiple = false;
 				}
 			}
+			
+			if(typeof(this.options.create) == 'string' && this.options.create == 'text') {
+				this.options.create = {
+					'type' : 'text',
+					'keys' : [$.ui.keyCode.ENTER,$.ui.keyCode.COMMA,$.ui.keyCode.TAB]
+				};
+			}
+			
+		},
+		
+		_create: function() {
+			
+			this._normalizeOptions();
+			
+			this.element.hide();
 			
 			//Parts
 			this.container = $('<div class="'+this.widgetBaseClass+'"></div>');
@@ -80,23 +77,25 @@
 					this.element.removeClass( "ui-autocomplete-loading" );
 				}
 			};
-			this.autocomplete._renderMenu = function( ul, items ) {
-				var self = this;
-				$.each( items, function( index, item ) {
-					self._renderItem( ul, item );
-				});
+			this.autocomplete._renderMenu = $.proxy(function( ul, items ) {
+				$.each( items, $.proxy(function( index, it ) {
+					this.autocomplete._renderItem( ul, it );
+				},this));
 				if(!items.length) {
 					var $li = $('<li class="ui-autocomplete-noresult">Aucun résultat</li>');
 					ul.append($li);
 				}
-				var $li = $('<li class="ui-autocomplete-buttons"><button>Créer un item</button></li>');
-				$li.find("button").button({
+				var $li = $('<li class="ui-autocomplete-buttons"></li>');
+				var $button = $('<button>Créer un item</button>');
+				$li.append($button);
+				$button.button({
 					icons: {
 						primary:'ui-icon-plus'
 					}
 				});
+				$button.bind('click',$.proxy(this.createItem,this));
 				ul.append($li);
-			};
+			},this);
 			this.background.click($.proxy(function() {
 				this.input.focus();
 			},this));
@@ -106,28 +105,21 @@
 			this.input.keydown($.proxy(function(e) {
 				var keycode =  e.keyCode ? e.keyCode : e.which;
 				var val = $(e.target).val();
-				if(keycode == this._key.backspace && !val.length && this.items) {
+				var isFocus = $(e.target).is(':focus');
+				
+				if(keycode == $.ui.keyCode.BACKSPACE && !val.length && this.items) {
 					var lastItem = this.items.last();
 					if(!lastItem.is('.ui-state-active')) {
 						lastItem.addClass('ui-state-active').removeClass('ui-state-default');
 					} else {
 						lastItem.find('.ui-icon-close').click();
 					}
-				} else if(
-					(keycode == this._key.enter || keycode == this._key.comma || keycode == this._key.tab) && 
-					val.length && $(e.target).is(':focus')
-				) {
-					
-					this.addItem({'label' : val});
-					this.input.val('');
-					this.input.focus();
+				} else if(val.length && isFocus && this.options.create.type == 'text' && $.inArray(keycode,this.options.create.keys) != -1) {
+					this._addItemFromInput();
 					return false;
-					
 				} else {
 					
-					
 				}
-
 			},this));
 			this.input.blur($.proxy(function(e) {
 				if(this.items && this.items.filter('.ui-state-active').length) {
@@ -135,7 +127,7 @@
 				}
 			},this));
 			this.input.keypress($.proxy(function(e) {
-				if (e.keyCode == this._key.enter) {
+				if (e.keyCode == $.ui.keyCode.ENTER) {
 					return false;
 				}
 				//auto expand input
@@ -147,6 +139,7 @@
 			//Refresh elements
 			this.refresh();
 		},
+		
 		refresh: function() {
 			// Keep track of the generated list items
 			this.items = this.items || $();
@@ -183,6 +176,32 @@
 			}, this ));
 			
 			//this.list.find('li.'+this.widgetBaseClass+'-item')
+		},
+		
+		_addItemFromInput : function() {
+			this.addItem({'label' : this.input.val()});
+			this.input.val('');
+			this.input.autocomplete( "close" );
+			this.input.focus();
+		},
+		
+		createItem : function(e) {
+			
+			switch(this.options.create.type) {
+				case 'text':
+					this._addItemFromInput();
+				break;
+				case 'dialog':
+					$('<div></div>').dialog({
+						modal : true,
+						resizable : true,
+						draggable : true
+					})
+				break;
+				case 'in':
+					
+				break;
+			}
 		},
 		
 		addItem : function(it) {
