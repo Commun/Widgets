@@ -14,13 +14,6 @@
 	-ms-user-select: none;
 	user-select: none;
 }
-.ui-itemsField * {
-	border:none;
-	margin:0;
-	padding:0;
-	list-style:none;
-	outline:none;
-}
 .ui-itemsField .background {
 	background:#fff;
 	width:100%;
