@@ -97,7 +97,7 @@
 				});
 				$button.bind('click',$.proxy(function(e) {
 					e.preventDefault();
-					$.proxy(this.createItem,this)
+					this.createItem.call(this,e);
 				},this));
 				ul.append($li);
 			},this);
