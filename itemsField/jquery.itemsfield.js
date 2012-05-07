@@ -51,6 +51,7 @@
 			
 			//Events
 			this.container.on("click", "a.ui-icon-close", $.proxy(function(e) {
+				e.preventDefault();
 				var it = $(e.target).data(this.namespace+'.itemsField');
 				this.removeItem(it.data(this.namespace+'.itemsField.option'));
 			}, this));
@@ -94,7 +95,10 @@
 						primary:'ui-icon-plus'
 					}
 				});
-				$button.bind('click',$.proxy(this.createItem,this));
+				$button.bind('click',$.proxy(function(e) {
+					e.preventDefault();
+					$.proxy(this.createItem,this)
+				},this));
 				ul.append($li);
 			},this);
 			this.background.click($.proxy(function() {
