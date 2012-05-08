@@ -51,6 +51,7 @@
 	margin-top:1px;
 	margin-bottom:3px;
 	-webkit-appearance: none;
+	outline:none;
 }
 
 .ui-itemsField .ui-itemsField-item {
@@ -70,6 +71,10 @@
 	user-select: none;
 }
 
+.ui-itemsField-single .ui-itemsField-item {
+	width:90%;
+}
+
 .ui-itemsField .ui-itemsField-item a.ui-icon {
 	margin: 0 0 0 5px;
 	position: absolute;
@@ -78,6 +83,7 @@
 	margin-top: -8px;
 	zoom: 1;
 	cursor:pointer;
+	outline:none;
 }
 
 

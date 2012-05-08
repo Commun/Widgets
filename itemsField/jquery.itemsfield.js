@@ -40,6 +40,7 @@
 			
 			//Parts
 			this.container = $('<div class="'+this.widgetBaseClass+'"></div>');
+			if(!this.options.multiple) this.container.addClass(this.widgetBaseClass+'-single');
 			this.background = $('<div class="background"></div>')
 			this.input = $('<input type="text" size="'+this.options.inputMinSize+'" />');
 			
@@ -155,7 +156,7 @@
 				var $el = $( el ).addClass( this.widgetBaseClass+"-option" ),
 					text = $el.text(),
 					it = $( '<span class="'+this.widgetBaseClass+'-item  ui-corner-all"></span>' )
-						.text(text)
+						.html('<span class="'+this.widgetBaseClass+'-label">'+text+'</span>')
 						.addClass('ui-state-default')
 						.data( this.namespace+'.itemsField.option', el )
 						.insertBefore( this.input ),
@@ -173,12 +174,16 @@
 			this.items = this.items.filter( $.proxy(function( i, it ) {
 				var isInOriginal = $.contains( this.element[0], $.data( it, this.namespace+'.itemsField.option' ) );
 				if ( !isInOriginal ) {
-					 $(it).fadeOut('fast',function() {
-						$(this).remove(); 
-					 });
+					$(it).hide();
+					$(it).remove();
 				}
 				return isInOriginal;
 			}, this ));
+			
+			if(!this.options.multiple) {
+				if(this.items.length) this.input.hide();
+				else this.input.show();
+			}
 			
 			//this.list.find('li.'+this.widgetBaseClass+'-item')
 		},
@@ -223,6 +228,7 @@
 				}
 			});
 			this.refresh();
+			this.input.focus();
 		},
 		
 		_itemRemove: function( e ) {
