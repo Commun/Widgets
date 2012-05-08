@@ -20,8 +20,19 @@
     	
 		$(function() {
 			
-			$('select[name=itemsField]').itemsField({
+			$('select[name=itemsField1]').itemsField({
 				source : ['Anatole','Bonjour','Charles','Daniel','Emballer','Alban','Alma','Ange','Basketball']
+			});
+			
+			$('select[name=itemsField2]').itemsField({
+				source : ['Anatole','Bonjour','Charles','Daniel','Emballer','Alban','Alma','Ange','Basketball'],
+				create : function(add) {
+					alert('add');
+					add({
+						'label' : 'Bonjour',
+						'value' : 1
+					});
+				}
 			});
 			
 		});
@@ -32,12 +43,23 @@
 <body>
 
 	<fieldset>
-    	<legend>ItemsField</legend>
+    	<legend>ItemsField #1</legend>
         
         <p>
-            <select name="itemsField">
+            <select name="itemsField1">
                 <option value=""></option>
                 <option value="1" selected="selected">David</option>
+            </select>
+        </p>
+    </fieldset>
+
+	<fieldset>
+    	<legend>ItemsField #2</legend>
+        
+        <p>
+            <select name="itemsField2">
+                <option value=""></option>
+                <option value="1" selected="selected">Paul</option>
             </select>
         </p>
     </fieldset>

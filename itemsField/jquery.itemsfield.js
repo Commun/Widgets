@@ -28,6 +28,11 @@
 					'type' : 'text',
 					'keys' : [$.ui.keyCode.ENTER,$.ui.keyCode.COMMA,$.ui.keyCode.TAB]
 				};
+			} else if(typeof(this.options.create) == 'function') {
+				this.options.create = {
+					'type' : 'function',
+					'callback' : this.options.create
+				};
 			}
 			
 		},
@@ -200,6 +205,13 @@
 			switch(this.options.create.type) {
 				case 'text':
 					this._addItemFromInput();
+				break;
+				case 'function':
+					this.options.create.callback($.proxy(function(it) {
+						this.input.val('');
+						this.input.autocomplete( "close" );
+						this.addItem(it);
+					},this));
 				break;
 				case 'dialog':
 					$('<div></div>').dialog({
