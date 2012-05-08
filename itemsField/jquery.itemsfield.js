@@ -207,7 +207,7 @@
 					this._addItemFromInput();
 				break;
 				case 'function':
-					this.options.create.callback($.proxy(function(it) {
+					this.options.create.callback.call(this,$.proxy(function(it) {
 						this.input.val('');
 						this.input.autocomplete( "close" );
 						this.addItem(it);
