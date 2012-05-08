@@ -8,7 +8,9 @@
 			source: [],
 			multiple: 'auto',
 			inputMinSize : 5,
-			create : 'text'
+			create : 'text',
+			labelNoresult : 'Aucun résultat',
+			labelAdd : 'Créer un item'
 		},
 		
 		_normalizeOptions : function() {
@@ -90,11 +92,11 @@
 					this.autocomplete._renderItem( ul, it );
 				},this));
 				if(!items.length) {
-					var $li = $('<li class="ui-autocomplete-noresult">Aucun résultat</li>');
+					var $li = $('<li class="ui-autocomplete-noresult">'+this.options.labelNoresult+'</li>');
 					ul.append($li);
 				}
 				var $li = $('<li class="ui-autocomplete-buttons"></li>');
-				var $button = $('<button>Créer un item</button>');
+				var $button = $('<button>'+this.options.labelAdd+'</button>');
 				$li.append($button);
 				$button.button({
 					icons: {
