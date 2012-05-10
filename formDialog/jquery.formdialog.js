@@ -13,7 +13,7 @@
 			'formSelector' : 'form',
 			'autoOpen' : true,
 			'closeOnSuccess' : true,
-			'displayError' : true,
+			'displayErrors' : true,
 			'dialogOptions' : {
 				'modal' : true,
 				'draggable' : false,
@@ -144,8 +144,8 @@
 						}
 					} else {
 						var error = this._getErrorFromPostData(response);
-						if(this.options.displayError) {
-							this._displayError(error);
+						if(this.options.displayErrors) {
+							this._displayErrors(error);
 						}
 						this._trigger('error', null, {
 							'error' : error
@@ -173,30 +173,21 @@
 			return this.dialog.find(this.options.formSelector).serialize();
 		},
 		
-		_displayError: function(errors) {
+		_displayErrors: function(errors) {
 			
-			//var html = '<p>Votre formulaire contient des erreurs</p>';
-			var html = '';
-			if(typeof(errors) == 'string') {
-				html += '<p>'+errors+'</p>';
-			} else if(errors.length) {
-				html += '<ul>';
-				for(var i = 0; i < errors.length; i++) {
-					html += '<li>'+errors[i]+'</li>';
-				}
-				html += '</ul>';
-			}
+			var html = this._errorsToHTML(errors);
 			
 			/*this.dialog.prepend('<div class="ui-state-error">'+html+'</div>');
 			this.dialog.animate({'scrollTop':'0'},500);*/
 			
-			$('<div></div>').html(''+html).dialog({
+			var alertIcon = '<span class="ui-icon ui-icon-alert" style="float:left; margin:3px 10px 0 0;"></span>';
+			$('<div></div>').html(html).dialog({
 				'modal' : true,
 				'draggable' : false,
 				'resizable' : false,
 				'width' : 500,
 				'dialogClass' : 'ui-state-error',
-				'title' : '<span class="ui-icon ui-icon-alert" style="float:left; margin:3px 10px 0 0;"></span> Votre formulaire contient des erreurs',
+				'title' : alertIcon+' Votre formulaire contient des erreurs',
 				'buttons' : {
 					'Ok' : function() {
 						$(this).dialog('close');
@@ -209,6 +200,21 @@
 				
 			});
 			
+		},
+		
+		_errorsToHTML : function(errors) {
+			//var html = '<p>Votre formulaire contient des erreurs</p>';
+			var html = '';
+			if(typeof(errors) == 'string') {
+				html += '<p>'+errors+'</p>';
+			} else if(errors.length) {
+				html += '<ul>';
+				for(var i = 0; i < errors.length; i++) {
+					html += '<li>'+errors[i]+'</li>';
+				}
+				html += '</ul>';
+			}
+			return html;
 		},
 
 		close: function() {
@@ -227,13 +233,9 @@
 		},
 		
 		widget: function() {
-			
 			return this.dialog;
-			
 		},
 		
-		
-		// Use the _setOption method to respond to changes to options
 		_setOption: function( key, value ) {
 			
 			switch( key ) {
