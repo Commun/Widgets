@@ -24,6 +24,9 @@
 				$('<div></div>').formDialog({
 					url : 'form.php',
 					title : 'Modifier un client',
+					dialogOptions : {
+						width : 500
+					},
 					success : function(e,ui) {
 						console.log('success',e,ui);
 					}

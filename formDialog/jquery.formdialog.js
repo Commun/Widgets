@@ -4,20 +4,21 @@
 	
 	$.widget( "ui.formDialog", {
 		
-		options: { 
-			'autoOpen' : true,
+		options: {
 			'title' : 'Modifier',
 			'url' : '',
 			'urlPost' : null,
 			'javascript' : null,
 			'css' : null,
 			'formSelector' : 'form',
+			'autoOpen' : true,
 			'closeOnSuccess' : true,
+			'displayError' : true,
 			'dialogOptions' : {
 				'modal' : true,
 				'draggable' : false,
 				'resizable' : false,
-				'width' : 960,
+				'width' : $(window).width()-200,
 				'height' : $(window).height()-100
 			}
 		},
@@ -71,6 +72,7 @@
 						this._build(html);
 						this._trigger("open");
 					}
+					
 				},this),
 				'error' : $.proxy(function(xhr, textStatus, e) {
 					
@@ -100,66 +102,78 @@
 			
 			this._trigger("build");
 			
-			this.dialog.dialog(jQuery.extend(this.options.dialogOptions,{
+			var dialogOptions = $.extend(this.options.dialogOptions,{
 				'title' : this.options.title,
-				'buttons' : {
-					'Annuler' : $.proxy(this.cancel,this),
-					'Enregistrer' : $.proxy(this.submit,this)
-				},
+				'buttons' : {},
 				'close' : $.proxy(this.close,this)
 				
-			}));
+			});
+			dialogOptions['buttons']['Annuler'] = $.proxy(this.cancel,this);;
+			dialogOptions['buttons']['Enregistrer'] = $.proxy(this.submit,this)
+			
+			this.dialog.dialog(dialogOptions);
 			
 		},
 		
-		
-		
 		submit: function() {
 			
-			var data = this.dialog.find(this.options.formSelector).serialize();
+			var data = this._getFormData();
 			
 			this.dialog.find('.ui-state-error').remove();
 			this.dialog.dialog( "option", "disabled", true );
 			
-			$.post(this.options.urlPost, data, $.proxy(function(data) {
-				
-				this.dialog.dialog( "option", "disabled", false );
-				
-				if(this._isSuccess(data)) {
-					this._trigger('success', null, {
-						'data' : this._getResponse(data)
-					});
-					if(this.options.closeOnSuccess) {
-						this.close();
-					}
-				} else {
-					this._error(data.error);
-					this._trigger('error', null, {
-						'data' : this._getError(data)
-					});
-				}
-				
-			},this),'json');
-			
-			this._trigger('submit',null,{
+			this._trigger('beforesubmit',null,{
 				'data' : data
+			});
+			
+			$.ajax(this.options.urlPost, {
+				'cache' : false,
+				'dataType' : 'json',
+				'type' : 'post',
+				'data' : data,
+				'success' : $.proxy(function(response,textStatus,xhr) {
+					
+					this.dialog.dialog( "option", "disabled", false );
+					
+					if(this._isSuccessFromPostData(response)) {
+						this._trigger('success', null, {
+							'data' : this._getResponseFromPostData(response)
+						});
+						if(this.options.closeOnSuccess) {
+							this.close();
+						}
+					} else {
+						var error = this._getErrorFromPostData(response);
+						if(this.options.displayError) {
+							this._displayError(error);
+						}
+						this._trigger('error', null, {
+							'error' : error
+						});
+					}
+					
+				},this)
 			});
 			
 		},
 		
-		_isSuccess : function(data) {
+		_isSuccessFromPostData : function(data) {
 			return data.success;
 		},
 		
-		_getResponse : function(data) {
+		_getResponseFromPostData : function(data) {
 			return data.response;
 		},
 		
-		_getError : function(data) {
+		_getErrorFromPostData : function(data) {
 			return data.error;
 		},
 		
-		_error: function(errors) {
+		_getFormData : function() {
+			return this.dialog.find(this.options.formSelector).serialize();
+		},
+		
+		_displayError: function(errors) {
 			
 			//var html = '<p>Votre formulaire contient des erreurs</p>';
 			var html = '';
