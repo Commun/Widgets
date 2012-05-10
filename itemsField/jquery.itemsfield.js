@@ -10,7 +10,8 @@
 			inputMinSize : 5,
 			create : 'text',
 			labelNoresult : 'Aucun résultat',
-			labelAdd : 'Créer un item'
+			labelAdd : 'Créer un item',
+			labelPlaceholder : 'Entrez des mots-clés...'
 		},
 		
 		_normalizeOptions : function() {
@@ -70,6 +71,7 @@
 					event.preventDefault();
 					event.stopPropagation();
 					this.input.val('');
+					this._updateInputSize();
 					this.addItem.call(this,ui.item);
 				},this)
 			});
@@ -130,27 +132,50 @@
 				} else if(val.length && isFocus && this.options.create.type == 'text' && $.inArray(keycode,this.options.create.keys) != -1) {
 					this._addItemFromInput();
 					return false;
-				} else {
-					
 				}
+				this._updateInputSize();
 			},this));
 			this.input.blur($.proxy(function(e) {
 				if(this.items && this.items.filter('.ui-state-active').length) {
 					this.items.filter('.ui-state-active').removeClass('ui-state-active').addClass('ui-state-default');
 				}
+				this._updateInputSize();
 			},this));
 			this.input.keypress($.proxy(function(e) {
 				if (e.keyCode == $.ui.keyCode.ENTER) {
 					return false;
 				}
 				//auto expand input
-				var val = this.input.val();
-				var newsize = (this.options.inputMinSize > val.length) ? this.options.inputMinSize : (val.length + 1);
-				this.input.attr("size", Math.ceil(newsize*1.2));
+				this._updateInputSize();
 			},this));
+			this.input.focus($.proxy(function(e) {
+				this._updateInputSize();
+				this.autocomplete._suggest([]);
+			}, this));
+			placeholderSupport = ("placeholder" in document.createElement("input"));
+			if(!placeholderSupport){
+				this.input.attr('title',this.options.labelPlaceholder);
+				this.input.hint();
+			} else {
+				this.input.attr('placeholder',this.options.labelPlaceholder);
+			}
+			if(this.options.labelPlaceholder.length) {
+				this._updateInputSize();
+			}
 			
 			//Refresh elements
 			this.refresh();
+		},
+		
+		_updateInputSize : function() {
+			var val = $.trim(this.input.val()).length ? this.input.val():this.options.labelPlaceholder;
+			this.input.attr("size", this._getSizeFromText(val));
+		},
+		
+		_getSizeFromText : function(text) {
+			var minSize = this.options.labelPlaceholder.length > this.options.inputMinSize.length ? this.options.labelPlaceholder:this.options.inputMinSize;
+			var newsize = (minSize > text.length) ? minSize : (text.length + 1);
+			return Math.ceil(newsize*1.2);
 		},
 		
 		refresh: function() {
@@ -243,6 +268,7 @@
 			});
 			this.refresh();
 			this.input.focus();
+			this._updateInputSize();
 		},
 		
 		_itemRemove: function( e ) {
