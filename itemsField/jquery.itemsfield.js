@@ -194,8 +194,9 @@
 		 		if(!$(el).text().length) return;
 				
 				var $el = $(el).addClass( this.widgetBaseClass+"-option" );
-				var $it = $('<span class="'+this.widgetBaseClass+'-item  ui-corner-all"></span>')
+				var $it = $('<span class="'+this.widgetBaseClass+'-item  ui-corner-all ui-state-default"></span>');
 				$it.data( this.namespace+'.itemsField.option',el);
+				$it.insertBefore( this.input );
 				$it = this._renderItem($it,$el);
 				
 				// Save it into the item cache
@@ -225,12 +226,11 @@
 		_renderItem : function($it,$option) {
 			var text = $option.text();
 			$it.html('<span class="'+this.widgetBaseClass+'-label">'+text+'</span>');
-			$it.addClass('ui-state-default');
-			$it.insertBefore( this.input );
 			
 			var $closeLink = $('<a href="#" class="ui-icon ui-icon-close"></a>')
 			$closeLink.data(this.namespace+'.itemsField',$it)
 			$closeLink.appendTo($it);
+			
 			return $it;
 		},
 		
