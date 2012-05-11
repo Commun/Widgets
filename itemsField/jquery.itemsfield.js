@@ -152,7 +152,11 @@
 			this.input.focus($.proxy(function(e) {
 				this._updateInputSize();
 				if(this.options.showOnFocus) {
-					this.autocomplete._suggest([]);
+					if(this.input.val().length) {
+						this.autocomplete._search(this.input.val());
+					} else {
+						this.autocomplete._suggest([]);
+					}
 				}
 			}, this));
 			placeholderSupport = ("placeholder" in document.createElement("input"));
