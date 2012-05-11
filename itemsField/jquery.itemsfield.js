@@ -46,6 +46,7 @@
 			this._normalizeOptions();
 			
 			this.element.hide();
+			this.element.data(this.namespace+'.itemsField',this);
 			
 			//Parts
 			this.container = $('<div class="'+this.widgetBaseClass+'"></div>');
@@ -191,20 +192,14 @@
 			// Use a class to avoid working on options that have already been created
 			this.element.find( "option:selected:not(."+this.widgetBaseClass+"-option)" ).each( $.proxy(function( i, el ) {
 		 		if(!$(el).text().length) return;
-				// Add the class so this option will not be processed next time the list is refreshed
-				var $el = $( el ).addClass( this.widgetBaseClass+"-option" ),
-					text = $el.text(),
-					it = $( '<span class="'+this.widgetBaseClass+'-item  ui-corner-all"></span>' )
-						.html('<span class="'+this.widgetBaseClass+'-label">'+text+'</span>')
-						.addClass('ui-state-default')
-						.data( this.namespace+'.itemsField.option', el )
-						.insertBefore( this.input ),
-					link = $('<a href="#" class="ui-icon ui-icon-close"></a>')
-						.data(this.namespace+'.itemsField',it)
-						.appendTo(it);
-		 
+				
+				var $el = $(el).addClass( this.widgetBaseClass+"-option" );
+				var $it = $('<span class="'+this.widgetBaseClass+'-item  ui-corner-all"></span>')
+				$it.data( this.namespace+'.itemsField.option',el);
+				$it = this._renderItem($it,$el);
+				
 				// Save it into the item cache
-				this.items = this.items.add( it );
+				this.items = this.items.add($it);
 		 
 			},this));
 		 
@@ -225,6 +220,18 @@
 			}
 			
 			//this.list.find('li.'+this.widgetBaseClass+'-item')
+		},
+		
+		_renderItem : function($it,$option) {
+			var text = $option.text();
+			$it.html('<span class="'+this.widgetBaseClass+'-label">'+text+'</span>');
+			$it.addClass('ui-state-default');
+			$it.insertBefore( this.input );
+			
+			var $closeLink = $('<a href="#" class="ui-icon ui-icon-close"></a>')
+			$closeLink.data(this.namespace+'.itemsField',$it)
+			$closeLink.appendTo($it);
+			return $it;
 		},
 		
 		_addItemFromInput : function() {
