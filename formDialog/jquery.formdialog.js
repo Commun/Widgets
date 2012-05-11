@@ -105,10 +105,19 @@
 			var dialogOptions = $.extend(this.options.dialogOptions,{
 				'title' : this.options.title,
 				'buttons' : {},
-				'close' : $.proxy(this.close,this)
+				'close' : function(self) {
+					return function() {
+						self.close.apply(self,arguments);
+					}
+				}(this)
 				
 			});
-			dialogOptions['buttons']['Annuler'] = $.proxy(this.cancel,this);;
+			dialogOptions['buttons']['Annuler'] = function(self) {
+				return function() {
+					$(this).dialog('close');
+					self.cancel.apply(self,arguments);
+				}
+			}(this);
 			dialogOptions['buttons']['Enregistrer'] = $.proxy(this.submit,this)
 			
 			this.dialog.dialog(dialogOptions);
@@ -218,10 +227,12 @@
 		},
 
 		close: function() {
-			
-			this.dialog.dialog('destroy');
-			this.dialog.remove();
-			this._trigger("close");
+			//console.log('close');
+			if(this.dialog) {
+				this.dialog.dialog('destroy');
+				this.dialog.remove();
+				this._trigger("close");
+			}
 			
 		},
 
@@ -249,12 +260,12 @@
 		},
 		
 		destroy: function() {
-			
-			this.dialog.dialog('destroy');
-			this.dialog.remove();
+			console.log('destroy');
+			//this.dialog.dialog('destroy');
+			//this.dialog.html('');
 			this.dialog = null;
 			
-			$.Widget.prototype.destroy.call( this );
+			//$.Widget.prototype.destroy.call( this );
 		}
 		
 	});

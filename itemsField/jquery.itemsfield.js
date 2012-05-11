@@ -9,6 +9,7 @@
 			multiple: 'auto',
 			inputMinSize : 5,
 			create : 'text',
+			showOnFocus : true,
 			labelNoresult : 'Aucun résultat',
 			labelAdd : 'Créer un item',
 			labelPlaceholder : 'Entrez des mots-clés...'
@@ -150,7 +151,9 @@
 			},this));
 			this.input.focus($.proxy(function(e) {
 				this._updateInputSize();
-				this.autocomplete._suggest([]);
+				if(this.options.showOnFocus) {
+					this.autocomplete._suggest([]);
+				}
 			}, this));
 			placeholderSupport = ("placeholder" in document.createElement("input"));
 			if(!placeholderSupport){
