@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Notes - Example</title>
+    <style type="text/css">
+        
+        body {
+			font-family:Verdana, Geneva, sans-serif;
+		}
+        
+    </style>
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/base/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <link href="jquery.notes.css" type="text/css" rel="stylesheet" />
+    
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="jquery.notes.js"></script>
+    <script type="text/javascript">
+    	
+		$(function() {
+			
+			$('a.notes').notes({
+				'path' : '',
+				'notesScript' : 'notes.php'
+			});
+			
+		});
+		
+    </script>
+</head>
+
+<body>
+
+	<fieldset>
+    	<legend>Notes #1</legend>
+        
+        <p>
+            <a href="#" class="notes" rel="example1">Notes</a>
+            <a href="#" class="notes" rel="example2">Notes</a>
+        </p>
+    </fieldset>
+
+</body>
+</html>

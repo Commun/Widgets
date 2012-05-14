@@ -1,0 +1,3 @@
+[submodule "notes/ButtPlug"]
+	path = notes/ButtPlug
+	url = git://github.com/dmongeau/ButtPlug.git
