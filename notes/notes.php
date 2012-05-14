@@ -27,11 +27,12 @@ class NotesService {
 				'name' => 'Example #1'
 			),
 			'notes' => array(
-				array(
+				/*array(
+					'id' => 1,
 					'text' => 'This is a note for example #1',
 					'author' => 'Some Author',
 					'date' => '2012-05-12 20:31:55'
-				)
+				)*/
 			)
 		);
 	}
@@ -39,6 +40,7 @@ class NotesService {
 	public function saveNote($data) {
 		
 		return array(
+			'id' => isset($data['id']) ? $data['id']:2,
 			'text' => $data['text'],
 			'author' => 'Some Author',
 			'date' => date('Y-m-d H:i:s')
