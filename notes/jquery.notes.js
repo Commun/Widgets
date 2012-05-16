@@ -100,6 +100,7 @@
 						this._addNote(note);
 					}
 					this.editDialog.dialog('close');
+					this.refresh(this.element.data(this.namespace+'.notes.item').key);
 				},this));
 			},this);
 			//Save
@@ -125,7 +126,7 @@
 		
 		
 		
-		refresh: function() {
+		refresh: function(keys) {
 			
 			//Load data
 			if($.ui.notes.refreshTimeout) {
@@ -133,25 +134,31 @@
 				$.ui.notes.refreshTimeout = null;
 			}
 			
+			if(typeof(keys) == 'undefined') {
+				keys = this.getKeys();
+			}
+			
 			//refresh data
-			$.ui.notes.refreshTimeout = window.setTimeout($.proxy(function() {
+			$.ui.notes.refreshTimeout = window.setTimeout($.proxy(function(keys) {
 				
-				var keys = this.getKeys();
-				
-				this._callService('getCount',{
-					'keys' : keys
-				},$.proxy(function(response) {
+				return function() {
+					//var keys = this.getKeys();
 					
-					for(var key in response) {
-						var it = $.ui.notes.items[key];
-						it.count = response[key];
-						var self = it.element.data(this.namespace+'.notes');
-						self._renderElement.call(self,it.element);
-					}
-					
-				},this));
+					this._callService('getCount',{
+						'keys' : keys
+					},$.proxy(function(response) {
+						
+						for(var key in response) {
+							var it = $.ui.notes.items[key];
+							it.count = response[key];
+							var self = it.element.data(this.namespace+'.notes');
+							self._renderElement.call(self,it.element);
+						}
+						
+					},this));
+				}
 				
-			},this),100);
+			}(keys),this),100);
 			
 		},
 		
