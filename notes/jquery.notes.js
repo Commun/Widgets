@@ -109,7 +109,7 @@
 			
 			$dialog.dialog({
 				'title' : !note ? this.options.labelAddTitle:this.options.labelEditTitle,
-				'width' : 300,
+				'width' : 500,
 				'resizable' : true,
 				'draggable' : true,
 				'dialogClass' : this.widgetBaseClass+'-dialog',
