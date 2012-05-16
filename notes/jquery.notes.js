@@ -100,7 +100,7 @@
 						this._addNote(note);
 					}
 					this.editDialog.dialog('close');
-					this.refresh(this.element.data(this.namespace+'.notes.item').key);
+					this.refresh([this.element.data(this.namespace+'.notes.item').key]);
 				},this));
 			},this);
 			//Save
