@@ -250,11 +250,24 @@
 		},
 		
 		_renderForm: function(note) {
+			
+			var options = [];
+			for(var i = 0; i < 6; i++) {
+				var selected = (typeof(note.priority) != 'undefined' && parseInt(note.priority) == i) ? ' selected="selected"':'';
+				options.push('<option value="'+i+'"'+selected+'>'+i+'</option>');
+			}
+			
 			return 	(typeof(note.id) != 'undefined' ? '<input type="hidden" name="id" value="'+note.id+'" />':'')+
 					'<div class="field">'+
 						'<label>Note :</label>'+
 						'<div class="input">'+
 							'<textarea name="text">'+(typeof(note.text) != 'undefined' ? note.text:'')+'</textarea>'+
+						'</div>'+
+					'</div>'+
+					'<div class="field">'+
+						'<label>Priority :</label>'+
+						'<div class="input">'+
+							'<select name="priority">'+options.join('')+'</select>'+
 						'</div>'+
 					'</div>';
 		},
