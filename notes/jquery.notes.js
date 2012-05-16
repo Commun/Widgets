@@ -124,7 +124,47 @@
 			
 		},
 		
-		
+		remove: function(id) {
+			
+			var buttons = {};
+			buttons[this.options.labelRemoveButton] = $.proxy(function(id) {
+				return function() {
+					
+					var data = {
+						'id' : id
+					};
+					this._callService('removeNote',data,$.proxy(function(note) {
+						if(this.notesDialog) {
+							this._removeNote(note);
+						}
+						this.removeDialog.dialog('close');
+						this.refresh([this.element.data(this.namespace+'.notes.item').key]);
+					},this));
+					
+				}
+			}(id),this);
+			buttons[this.options.labelCancelButton] = $.proxy(function() {
+				this.removeDialog.dialog('close');
+			},this);
+			this.removeDialog = $dialog = $(
+				'<div class="ui-widget">'+
+					'<div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;">'+
+						'<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>'+
+						this.options.labelRemoveMessage+'</p>'+
+					'</div>'+
+				'</div>');
+			$dialog.dialog({
+				'title' : this.options.labelRemoveTitle,
+				'dialogClass' : this.widgetBaseClass+'-dialog',
+				'buttons' : buttons,
+				'close' : $.proxy(function() {
+					this.removeDialog.dialog('destroy');
+					this.removeDialog.remove();
+					this.removeDialog = null;
+				},this)
+			});
+			
+		},
 		
 		refresh: function(keys) {
 			
@@ -167,9 +207,10 @@
 			this.notesDialog = $dialog = $('<div><div class="item"></div><div class="list"><ul class="notes"></ul></div></div>');
 			
 			$dialog.find('.item').append(this._renderItem(it));
+			$dialog.data(this.namespace+'.notes.item',it);
 			
 			if(!notes.length) {
-				$dialog.find('.list ul.notes').append('<li class="nonote last">'+this.options.labelNonote+'</li>');
+				$dialog.find('.list ul.notes').append(this._renderNonote(it));
 			} else {
 				for(var i = 0; i < notes.length; i++) {
 					this._addNote(notes[i]);
@@ -202,6 +243,19 @@
 			
 		},
 		
+		_removeNote: function(note) {
+			var $list = this.notesDialog.find('.list ul.notes');
+			var $current = $list.find('.'+this.widgetBaseClass+'-note-'+note.id);
+			if($current.length) {
+				$current.remove();
+			}
+			$list.find('li.last').removeClass('last');
+			$list.find('li:last').addClass('last');
+			if(!$list.find('li').length) {
+				$list.append(this._renderNonote(this.notesDialog.data(this.namespace+'.notes.item')));
+			}
+		},
+		
 		_refreshElement: function() {
 			
 			for(var key in $.ui.notes.items) {
@@ -229,31 +283,8 @@
 			$list.find('li.nonote').remove();
 		},
 		
-		_removeNote: function(note) {
-			var buttons = {};
-			buttons[this.options.labelRemoveButton] = $.proxy(function() {
-				//this.add();
-			},this);
-			buttons[this.options.labelCancelButton] = $.proxy(function() {
-				this.removeDialog.dialog('close');
-			},this);
-			this.removeDialog = $dialog = $(
-				'<div class="ui-widget">'+
-					'<div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;">'+
-						'<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>'+
-						this.options.labelRemoveMessage+'</p>'+
-					'</div>'+
-				'</div>');
-			$dialog.dialog({
-				'title' : this.options.labelRemoveTitle,
-				'dialogClass' : this.widgetBaseClass+'-dialog',
-				'buttons' : buttons,
-				'close' : $.proxy(function() {
-					this.removeDialog.dialog('destroy');
-					this.removeDialog.remove();
-					this.removeDialog = null;
-				},this)
-			});
+		_renderNonote: function(it) {
+			return '<li class="nonote last">'+this.options.labelNonote+'</li>';
 		},
 		
 		_renderForm: function(note) {
@@ -318,7 +349,7 @@
 			$removeButton.click($.proxy(function(e) {
 				e.preventDefault();
 				var note = $(e.target).parents('li').eq(0).data(this.namespace+'.notes.note');
-				this._removeNote(note);
+				this.remove(note.id);
 			},this));
 			
 			return $li;
