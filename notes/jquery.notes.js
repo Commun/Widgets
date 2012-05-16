@@ -91,6 +91,7 @@
 			//Save
 			buttons[this.options.labelSaveButton] = $.proxy(function() {
 				var data = {};
+				data.key = this.element.data(this.namespace+'.notes.item').key;
 				this.editDialog.find('form :input').each(function() {
 					data[$(this).attr('name')] = $(this).val();
 				});
@@ -131,6 +132,8 @@
 				window.clearTimeout($.ui.notes.refreshTimeout);
 				$.ui.notes.refreshTimeout = null;
 			}
+			
+			//refresh data
 			$.ui.notes.refreshTimeout = window.setTimeout($.proxy(function() {
 				
 				var keys = this.getKeys();
@@ -389,7 +392,7 @@
 		},
 		
 		_getKeyFromElement: function(el) {
-			return $(el).attr('rel');
+			return $(el).attr('data-notes');
 		},
 		
 		// Use the _setOption method to respond to changes to options
