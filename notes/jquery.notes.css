@@ -50,6 +50,7 @@
 	margin:0;
 	padding:0;
 	margin-top:5px;
+	white-space:normal;
 }
 .ui-notes-dialog .list ul.notes li.ui-notes-unread {
 	font-weight:bold;
