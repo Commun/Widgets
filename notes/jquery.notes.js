@@ -25,7 +25,9 @@
 			labelRemoveTitle : 'Remove note',
 			labelDisplayTitle : 'View notes for %{name}',
 			labelNonote : 'No note',
-			labelRemoveMessage : 'Are you sure you really want to remove this note?'
+			labelRemoveMessage : 'Are you sure you really want to remove this note?',
+			labelNoteField : 'Note',
+			labelPriorityField : 'Priority'
 		},
 		
 		_create: function() {
@@ -297,13 +299,13 @@
 			
 			return 	(typeof(note.id) != 'undefined' ? '<input type="hidden" name="id" value="'+note.id+'" />':'')+
 					'<div class="field">'+
-						'<label>Note :</label>'+
+						'<label>'+this.options.labelNoteField+' :</label>'+
 						'<div class="input">'+
 							'<textarea name="text">'+(typeof(note.text) != 'undefined' ? note.text:'')+'</textarea>'+
 						'</div>'+
 					'</div>'+
 					'<div class="field">'+
-						'<label>Priority :</label>'+
+						'<label>'+this.options.labelPriorityField+' :</label>'+
 						'<div class="input">'+
 							'<select name="priority">'+options.join('')+'</select>'+
 						'</div>'+
