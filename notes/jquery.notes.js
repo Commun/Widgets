@@ -351,7 +351,7 @@
 				e.preventDefault();
 				var $note = $(e.target).parents('li').eq(0);
 				
-				if($note.find('.text').is(':visible')) {
+				if(!$note.find('.text').is(':visible')) {
 					$note.find('.text').slideDown('fast');
 					$note.find('.icon span').removeClass('ui-icon-triangle-1-e');
 					$note.find('.icon span').addClass('ui-icon-triangle-1-s');
