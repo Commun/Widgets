@@ -320,7 +320,7 @@
 			
 			var $li = $('<li></li>');
 			
-			if(typeof(note.hasRead) != 'undefined' && !note.hasRead) {
+			if(typeof(note.hasRead) != 'undefined' && !parseInt(note.hasRead)) {
 				$li.addClass(this.widgetBaseClass+'-unread');
 			}
 			
