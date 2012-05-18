@@ -340,10 +340,9 @@
 			var $label = $('<div class="label"></label>');
 			$label.append('<div class="summary"><a href="#">'+summary+'</a></div>');
 			$label.append('<div class="infos">'+dateText+' - '+note.author+'</div>');
-			$label.append('<div class="text" style="display:none;"><pre>'+note.text+'</pre></div>');
 			$li.append($label);
-			
 			$li.append('<div style="clear:both;"></div>');
+			$li.append('<div class="text" style="display:none;"><pre>'+note.text+'</pre></div>');
 			
 			//Events
 			var $summaryLink = $li.find('.summary a, .icon a');
