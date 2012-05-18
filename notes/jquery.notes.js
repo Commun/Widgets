@@ -350,23 +350,31 @@
 			$summaryLink.click($.proxy(function(e) {
 				e.preventDefault();
 				var $note = $(e.target).parents('li').eq(0);
-				$note.find('.text').slideDown('fast');
-				$note.find('.icon span').removeClass('ui-icon-triangle-1-e');
-				$note.find('.icon span').addClass('ui-icon-triangle-1-s');
 				
-				//Mark as read
-				var note = $note.data(this.namespace+'.notes.note');
-				if(typeof(note.hasRead) != 'undefined' && !parseInt(note.hasRead)) {
-					var id = $note.data(this.namespace+'.notes.note').id;
-					this._callService('readNote',{'id':id},$.proxy(function($note) {
-						return function() {
-						  $note.removeClass(this.widgetBaseClass+'-unread');
-						  var note = $note.data(this.namespace+'.notes.note');
-						  note.hasRead = 1;
-						  $note.data(this.namespace+'.notes.note',note);
-						}
-					}($note),this));
+				if($note.find('.text').is(':visible')) {
+					$note.find('.text').slideDown('fast');
+					$note.find('.icon span').removeClass('ui-icon-triangle-1-e');
+					$note.find('.icon span').addClass('ui-icon-triangle-1-s');
+					
+					//Mark as read
+					var note = $note.data(this.namespace+'.notes.note');
+					if(typeof(note.hasRead) != 'undefined' && !parseInt(note.hasRead)) {
+						var id = $note.data(this.namespace+'.notes.note').id;
+						this._callService('readNote',{'id':id},$.proxy(function($note) {
+							return function() {
+							  $note.removeClass(this.widgetBaseClass+'-unread');
+							  var note = $note.data(this.namespace+'.notes.note');
+							  note.hasRead = 1;
+							  $note.data(this.namespace+'.notes.note',note);
+							}
+						}($note),this));
+					}
+				} else {
+					$note.find('.text').slideUp('fast');
+					$note.find('.icon span').removeClass('ui-icon-triangle-1-s');
+					$note.find('.icon span').addClass('ui-icon-triangle-1-e');
 				}
+				
 			},this));
 			
 			var $editButton = $li.find('.buttons .edit');
