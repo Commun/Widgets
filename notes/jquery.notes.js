@@ -354,12 +354,19 @@
 				$note.find('.icon span').removeClass('ui-icon-triangle-1-e');
 				$note.find('.icon span').addClass('ui-icon-triangle-1-s');
 				
-				var id = $note.data(this.namespace+'.notes.note').id;
-				this._callService('readNote',{'id':id},$.proxy(function($note) {
-					return function() {
-					  $note.removeClass(this.widgetBaseClass+'-unread');
-					}
-				}($note),this));
+				//Mark as read
+				var note = $note.data(this.namespace+'.notes.note');
+				if(typeof(note.hasRead) != 'undefined' && !parseInt(note.hasRead)) {
+					var id = $note.data(this.namespace+'.notes.note').id;
+					this._callService('readNote',{'id':id},$.proxy(function($note) {
+						return function() {
+						  $note.removeClass(this.widgetBaseClass+'-unread');
+						  var note = $note.data(this.namespace+'.notes.note');
+						  note.hasRead = 1;
+						  $note.data(this.namespace+'.notes.note',note);
+						}
+					}($note),this));
+				}
 			},this));
 			
 			var $editButton = $li.find('.buttons .edit');
