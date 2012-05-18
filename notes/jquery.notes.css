@@ -29,6 +29,7 @@
 .ui-notes-dialog .list ul.notes li .icon {
 	float:left;
 	height:20px;
+	width:20px;
 }
 .ui-notes-dialog .list ul.notes li .label {
 	float:left;
