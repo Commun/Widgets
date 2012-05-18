@@ -27,12 +27,12 @@ class NotesService {
 				'name' => 'Example #1'
 			),
 			'notes' => array(
-				/*array(
+				array(
 					'id' => 1,
 					'text' => 'This is a note for example #1',
 					'author' => 'Some Author',
 					'date' => '2012-05-12 20:31:55'
-				)*/
+				)
 			)
 		);
 	}
@@ -45,6 +45,13 @@ class NotesService {
 			'author' => 'Some Author',
 			'date' => date('Y-m-d H:i:s')
 		);
+	}
+	
+	public function readNote($data) {
+		
+		$ids = is_array($data['id']) ? $data['id']:array($data['id']);
+		
+		return true;
 	}
 	
 }

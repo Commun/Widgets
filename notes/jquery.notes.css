@@ -26,6 +26,13 @@
 .ui-notes-dialog .list ul.notes li.last {
 	border-bottom:none;
 }
+.ui-notes-dialog .list ul.notes li .icon {
+	float:left;
+	height:20px;
+}
+.ui-notes-dialog .list ul.notes li .label {
+	float:left;
+}
 .ui-notes-dialog .list ul.notes li .buttons {
 	float:right;
 }
@@ -37,6 +44,12 @@
 .ui-notes-dialog .list ul.notes li .infos {
 	color:#999;
 	font-size:75%;
+}
+.ui-notes-dialog .list ul.notes li pre {
+	font-size:100%;
+	margin:0;
+	padding:0;
+	margin-top:5px;
 }
 .ui-notes-dialog .list ul.notes li.ui-notes-unread {
 	font-weight:bold;

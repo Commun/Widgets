@@ -318,6 +318,7 @@
 		
 		_renderNote: function(note) {
 			
+			//Markup
 			var $li = $('<li></li>');
 			
 			if(typeof(note.hasRead) != 'undefined' && !parseInt(note.hasRead)) {
@@ -326,13 +327,38 @@
 			
 			$li.append('<div class="buttons"><a href="#" class="edit"></a><a href="#" class="remove"></a></div>');
 			
-			$li.append('<div class="text">'+note.text+'</div>');
+			var summary = note.text.substr(0,40)+'...';
+			
+			$li.prepend('<div class="icon"><a href="#"><span class="ui-icon ui-icon-triangle-1-e"></span></a></div>');
 			
 			var dateParts = note.date.split(' ');
 			var date = $.datepicker.parseDate('yy-mm-dd', dateParts[0]);
 			var dateText = $.datepicker.formatDate('DD d MM yy', date);
 			
-			$li.append('<div class="infos">'+dateText+' - '+note.author+'</div>');
+			var $label = $('<div class="label"></label>');
+			$label.append('<div class="summary"><a href="#">'+summary+'</a></div>');
+			$label.append('<div class="infos">'+dateText+' - '+note.author+'</div>');
+			$label.append('<div class="text" style="display:none;"><pre>'+note.text+'</pre></div>');
+			$li.append($label);
+			
+			$li.append('<div style="clear:both;"></div>');
+			
+			//Events
+			var $summaryLink = $li.find('.summary a, .icon a');
+			$summaryLink.click($.proxy(function(e) {
+				e.preventDefault();
+				var $note = $(e.target).parents('li').eq(0);
+				$note.find('.text').slideDown('fast');
+				$note.find('.icon span').removeClass('ui-icon-triangle-1-e');
+				$note.find('.icon span').addClass('ui-icon-triangle-1-s');
+				
+				var id = $note.data(this.namespace+'.notes.note').id;
+				this._callService('readNote',{'id':id},$.proxy(function($note) {
+					return function() {
+					  $note.removeClass(this.widgetBaseClass+'-unread');
+					}
+				}($note),this));
+			},this));
 			
 			var $editButton = $li.find('.buttons .edit');
 			$editButton.button({
