@@ -36,6 +36,7 @@
 			
 			//Init element
 			var key = this._getKeyFromElement(this.element);
+			if(!key || !key.length) return;
 			$.ui.notes.items[key] = {
 				'key' : key,
 				'element' : this.element,
