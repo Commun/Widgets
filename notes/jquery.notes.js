@@ -320,6 +320,10 @@
 			
 			var $li = $('<li></li>');
 			
+			if(typeof(note.hasRead) != 'undefined' && !note.hasRead) {
+				$li.addClass(this.widgetBaseClass+'-unread');
+			}
+			
 			$li.append('<div class="buttons"><a href="#" class="edit"></a><a href="#" class="remove"></a></div>');
 			
 			$li.append('<div class="text">'+note.text+'</div>');
