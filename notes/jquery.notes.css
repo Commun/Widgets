@@ -4,6 +4,10 @@
 	font-size:75%;
 }
 
+.ui-notes-dialog .item {
+	margin-bottom:5px;
+}
+
 .ui-notes-dialog .list ul.notes, .ui-notes-dialog .list ul.notes li {
 	list-style:none;
 	margin:0;
